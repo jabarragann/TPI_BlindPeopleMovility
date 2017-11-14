@@ -1,0 +1,81 @@
+Connect bluetooth headphones to raspberry 
+
+Device 00:18:09:1E:BD:B8 DR-BTN200
+
+***************************************************************************************************
+PULSE AUDIO NOT DETECTING BLUETOOTH DEVICES-FIXED-ONLY IF DEVICE IS NO DECTED AS SINK
+***************************************************************************************************
+https://askubuntu.com/questions/481951/bluetooth-headset-connects-but-not-showing-in-sound-settings
+***************************************************************************************************
+
+The headset is properly paired and shows under Bluetooth Devices but it does not show as an available INPUT / OUTPUT source for audio. The problem is that the pulseaudio bluetooth module is loaded before X11, changing a couple of config files do the trick:
+
+PulseAudio can not load bluetooth module 15.10/16.04
+
+nano /etc/pulse/default.pa
+
+Comment out the following lines:
+
+#.ifexists module-bluetooth-discover.so
+#load-module module-bluetooth-discover
+#.endif
+nano /usr/bin/start-pulseaudio-x11
+
+Find the following lines and add after them:
+
+if [ x”$SESSION_MANAGER” != x ] ; then
+/usr/bin/pactl load-module module-x11-xsmp “display=$DISPLAY session_manager=$SESSION_MANAGER” > /dev/null
+fi
+
+Add the following lines:
+/usr/bin/pactl load-module module-bluetooth-discover
+/usr/bin/pactl load-module module-switch-on-connect
+This way the Pulse audio’s Bluetooth modules will not be downloaded at boot time but after x11 is started.
+
+****************************************************************************************************
+
+https://wiki.archlinux.org/index.php/Bluetooth_headset
+
+0)"nano /etc/bluetooth/audio.conf"
+   add "Enable=Source,Sink,Media,Socket"
+   systemctl restart bluetooth
+   
+1)systemctl restart bluetooth
+2)bluetoothctl
+	# power on
+	# agent on
+	# default-agent
+	# scan on
+3)pacmd list-sinks
+4)pacmd set-default-sink bluez_sink.xx_xx_xx_xx_xx_xx
+
+Sinks: The audio outputs.
+Sources: The audio inputs.
+
+To see them:
+pacmd list-cards
+pacmd list-sinks
+pacmd list-sources
+
+pacmd set-default-sink bluez_sink.xx_xx_xx_xx_xx_xx
+
+
+Install mp3 player
+
+sudo apt-get install mpg123
+
+play song
+
+mpg123 Star-Wars-Duel-of-the-Fates.mp3
+
+Install Pybluez
+sudo apt-get update
+sudo apt-get install python-pip python-dev ipython
+
+sudo apt-get install bluetooth libbluetooth-dev
+sudo pip install pybluez
+
+Test Installation
+
+python
+import bluetooth

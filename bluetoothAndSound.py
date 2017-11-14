@@ -42,10 +42,15 @@ if __name__ == "__main__":
     
     if connected=="yes":
       print("Connection successful")
+    else:
+      print("Can not connect with the device")
       
-  print("Your device is connected.")
-  print("Lets play a wav File...!")
-  playWavFile()
+  else:    
+    print("Your device is connected.")
+  
+  if connected=="yes":
+    print("Lets play a wav File...!")
+    playWavFile()
   
   
   
