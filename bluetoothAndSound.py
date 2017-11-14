@@ -30,7 +30,6 @@ def playWavFile():
   sd.play(data,fs)
   sd.wait()
 
-
 if __name__ == "__main__":
   
   print("Checking Device Connection")
@@ -44,7 +43,7 @@ if __name__ == "__main__":
     if connected=="yes":
       print("Connection successful")
       
-  
+  print("Your device is connected.")
   print("Lets play a wav File...!")
   playWavFile()
   
